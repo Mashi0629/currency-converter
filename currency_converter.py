@@ -7,9 +7,12 @@ def convert_currency(amount, from_currency, to_currency):
 
     print(data)
     
-    if data.get("result"):
-        return data["result"]
-    
+    if data.get("result") == "success":
+        rates = data["rates"]
+        if to_currency in rates:
+            return amount * rates[to_currency]
+        else:
+            return f"Error: Currency {to_currency} not found."
     else:
         return "Error fetching data."
     
