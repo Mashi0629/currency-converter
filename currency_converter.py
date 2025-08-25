@@ -1,17 +1,6 @@
 import tkinter as tk
 import requests
 
-# API conversion function
-def convert_currency(amount, from_currency, to_currency):
-    url = f"https://api.exchangerate.host/convert?from={from_currency}&to={to_currency}&amount={amount}"
-    response = requests.get(url)
-    data = response.json()
-    if data.get("result"):
-        return data["result"]
-    else:
-        return "Error fetching data."
-
-# Function called when button is clicked
 def on_convert():
     try:
         amount = float(amount_entry.get())
@@ -19,9 +8,28 @@ def on_convert():
         to_curr = to_entry.get().upper()
         
         result = convert_currency(amount, from_curr, to_curr)
-        result_label.config(text=f"{amount} {from_curr} = {result} {to_curr}")
+        if result:
+            result_label.config(text=f"{amount} {from_curr} = {result:.2f} {to_curr}")
+        else:
+            result_label.config(text="Conversion failed. Check currency codes.")
     except ValueError:
         result_label.config(text="Please enter a valid amount.")
+
+
+# Function called when button is clicked
+def convert_currency(amount, from_currency, to_currency):
+    url = f"https://api.exchangerate.host/convert?from={from_currency}&to={to_currency}&amount={amount}"
+    response = requests.get(url)
+    data = response.json()
+
+    # Debugging: print the API response
+    print(data)
+
+    if data.get("info") and data.get("result"):
+        return data["result"]
+    else:
+        return None
+
 
 # Tkinter UI
 root = tk.Tk()
