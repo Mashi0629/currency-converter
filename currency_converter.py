@@ -1,28 +1,14 @@
 import tkinter as tk
+from tkinter import ttk
 import requests
 
-def on_convert():
-    try:
-        amount = float(amount_entry.get())
-        from_curr = from_entry.get().upper()
-        to_curr = to_entry.get().upper()
-        
-        result = convert_currency(amount, from_curr, to_curr)
-        if result:
-            result_label.config(text=f"{amount} {from_curr} = {result:.2f} {to_curr}")
-        else:
-            result_label.config(text="Conversion failed. Check currency codes.")
-    except ValueError:
-        result_label.config(text="Please enter a valid amount.")
-
-
-# Function called when button is clicked
+# Function to convert currency
 def convert_currency(amount, from_currency, to_currency):
     url = f"https://api.exchangerate.host/convert?from={from_currency}&to={to_currency}&amount={amount}"
     response = requests.get(url)
     data = response.json()
 
-    # Debugging: print the API response
+    # Debugging: print the full API response in terminal
     print(data)
 
     if data.get("info") and data.get("result"):
@@ -30,26 +16,53 @@ def convert_currency(amount, from_currency, to_currency):
     else:
         return None
 
+# Function for button click
+def on_convert():
+    try:
+        amount = float(amount_entry.get())
+        from_curr = from_currency.get()
+        to_curr = to_currency.get()
+        
+        result = convert_currency(amount, from_curr, to_curr)
+        if result:
+            result_label.config(
+                text=f"{amount} {from_curr} = {result:.2f} {to_curr}"
+            )
+        else:
+            result_label.config(text="❌ Conversion failed. Check currency codes.")
+    except ValueError:
+        result_label.config(text="⚠️ Please enter a valid amount.")
 
-# Tkinter UI
+# ---------------- UI ----------------
 root = tk.Tk()
 root.title("Currency Converter")
+root.geometry("350x250")
 
-tk.Label(root, text="Amount:").grid(row=0, column=0)
+# Amount
+tk.Label(root, text="Amount:").grid(row=0, column=0, padx=10, pady=5, sticky="w")
 amount_entry = tk.Entry(root)
-amount_entry.grid(row=0, column=1)
+amount_entry.grid(row=0, column=1, pady=5)
 
-tk.Label(root, text="From Currency:").grid(row=1, column=0)
-from_entry = tk.Entry(root)
-from_entry.grid(row=1, column=1)
+# Currency list
+currencies = ["USD", "EUR", "GBP", "LKR", "JPY", "AUD", "CAD", "INR"]
 
-tk.Label(root, text="To Currency:").grid(row=2, column=0)
-to_entry = tk.Entry(root)
-to_entry.grid(row=2, column=1)
+# From Currency
+tk.Label(root, text="From Currency:").grid(row=1, column=0, padx=10, pady=5, sticky="w")
+from_currency = ttk.Combobox(root, values=currencies, state="readonly")
+from_currency.grid(row=1, column=1, pady=5)
+from_currency.set("USD")  # default
 
+# To Currency
+tk.Label(root, text="To Currency:").grid(row=2, column=0, padx=10, pady=5, sticky="w")
+to_currency = ttk.Combobox(root, values=currencies, state="readonly")
+to_currency.grid(row=2, column=1, pady=5)
+to_currency.set("LKR")  # default
+
+# Convert Button
 convert_btn = tk.Button(root, text="Convert", command=on_convert)
-convert_btn.grid(row=3, column=0, columnspan=2)
+convert_btn.grid(row=3, column=0, columnspan=2, pady=10)
 
+# Result
 result_label = tk.Label(root, text="", font=("Arial", 12), fg="blue")
 result_label.grid(row=4, column=0, columnspan=2, pady=10)
 
