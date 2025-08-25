@@ -1,3 +1,4 @@
+import tkinter as tk
 import requests
 
 def convert_currency(amount, from_currency, to_currency):
@@ -24,6 +25,32 @@ to_currency = input("To currency (e.g., LKR): ").upper()
 result = convert_currency(amount, from_currency, to_currency)
 print(f"{amount} {from_currency} = {result} {to_currency}")    
 
+
+#GUI setup#
+
+root = tk.Tk()
+root.title("Currency Converter")
+
+tk.Label(root, text="Amount:").grid(row=0, column=0)
+amount_entry = tk.Entry(root)
+amount_entry.grid(row=0, column=1)
+
+
+tk.Label(root, text="From:").grid(row=0, column=0)
+amount_entry = tk.Entry(root)
+amount_entry.grid(row=1, column=1)
+
+
+tk.Label(root, text="To:").grid(row=0, column=0)
+amount_entry = tk.Entry(root)
+amount_entry.grid(row=2, column=1)
+
+convert_btn = tk.Button(root, text="Convert" , command=convert_currency)
+convert_btn.grid(row=3, column=0, columnspan=2)
     
 
+result_label = tk.Label(root, text="", font=("Arial", 12), fg="blue")
+result_label.grid(row=4, column=0, columnspan=2, pady=10)
+    
+root.mainloop()
 
